@@ -146,13 +146,17 @@ class MainFrame ( wx.Frame ):
 			
 		bSizer5 = wx.BoxSizer( wx.VERTICAL )
 		
-		self.dText = wx.StaticText( self, wx.ID_ANY, u"", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_CENTER_HORIZONTAL|wx.ST_ELLIPSIZE_MIDDLE )
+		self.tDl = wx.StaticText( self, wx.ID_ANY, u"", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_CENTER_HORIZONTAL|wx.ST_ELLIPSIZE_MIDDLE )
 		
-		self.dText.Wrap( -1 )
+		self.tDl.Wrap( -1 )
 		
-		self.dText.SetForegroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOWTEXT ) )
+		self.tDl.SetForegroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOWTEXT ) )
+		#self.tDl.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
 		
-		bSizer5.Add( self.dText, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )		
+		###SORRY FOR THIS 
+		self.tx = self.tDl
+		
+		bSizer5.Add( self.tDl, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )		
 		
 		self.pb = wx.Gauge( self, wx.ID_ANY, 100, wx.DefaultPosition, wx.DefaultSize, wx.GA_HORIZONTAL )
 		self.pb.SetValue( 0 )
@@ -169,9 +173,10 @@ class MainFrame ( wx.Frame ):
 		self.Centre( wx.BOTH )
 				
 		self.InitYTDL()
-		self.yt.set_pb(self.pb, self.dText)
+		self.yt.set_parent(self)
 		#self.loop = asyncio.get_event_loop()
 		#self.loop.run_forever()
+		self.Fit()
 
 	def SetList(self, event):
 		self.SetFilters(None)
@@ -212,7 +217,7 @@ class MainFrame ( wx.Frame ):
 		#proc = Process(target=self.yt.download, args=[self.ListCtrl.GetNextSelected(-1), self.pb])
 		#self.loop.create_task(self.yt.download(self.ListCtrl.GetNextSelected(-1)))
 		threading.Thread(target=self.yt.download, args=[self.ListCtrl.GetNextSelected(-1)]).start()
-		print("DownloadItem ENDED")
+		print("download thread started")
 		#proc.start()
 		#self.pb.Hide()
 		

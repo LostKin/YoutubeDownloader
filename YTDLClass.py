@@ -3,16 +3,18 @@ import threading
 
 class YTDL:
     def __init__(self):
+        self.diff = 1
         return
     
-    def set_pb(self, pb, tx):
-        self.pb = pb
-        self.tx = tx
+    def set_parent(self, par):
+        self.par = par
     
     def set_url(self, s:str):
         self.yt = pytube.YouTube(s)
-        threading.Thread(target=self.yt.register_on_progress_callback, args=[self.on_download_progress]).start()
-        threading.Thread(target=self.yt.register_on_complete_callback, args=[self.on_complete]).start()
+        #threading.Thread(target=self.yt.register_on_progress_callback, args=[self.on_download_progress]).start()
+        #threading.Thread(target=self.yt.register_on_complete_callback, args=[self.on_complete]).start()
+        self.yt.register_on_progress_callback(self.on_download_progress)
+        self.yt.register_on_complete_callback(self.on_complete)
         self.st = self.yt.streams
         
     def set_filters(self, fil:dict):
@@ -37,26 +39,41 @@ class YTDL:
         self.st = self.yt.streams
     
     def download(self, id):
+        self.per = 0
         if (len(self.st.all()) <= id):
             return 1
-        self.tx.SetLabel(u"Download in progress")
-        self.tx.GetParent().Layout()
+        self.par.tx.SetLabel(u"Download in progress")
+        self.par.Fit()
+        self.par.Refresh()
+        #self.par.Update()        
+        #self.par.tx.GetParent().Layout()
         t = self.st.all()[id]
         self.done = 0
         self.all = -1
         t.download()
+        print("download finished")
         return 0
     
     def on_download_progress(self, stream, chunk, file_handler, bytes_remaining):
         if self.all == -1:
             self.all = bytes_remaining
-        print(100 * self.done / self.all)
+        #print(100 * self.done / self.all, self.per)
         self.done = self.all - bytes_remaining
-        self.pb.SetValue(self.done/self.all * 100)        
+        if (self.done / self.all * 100 - self.per >= self.diff):
+            print(self.per)
+            self.par.pb.SetValue(self.done/self.all * 100)  
+            self.per = self.done / self.all * 100 
+            #self.par.pb.GetParent().Layout()
+            #self.pb.GetParent().GetParent().Refresh()
+            #self.pb.GetParent().GetParent().Update()
+            #self.par.Fit()
+            self.par.Refresh()
+            #self.par.Update()
     
     def on_complete(self, stream, file_handler):
-        self.tx.SetLabel(u"Download complete")
-        self.tx.GetParent().Layout()
-        self.pb.SetValue(0)
+        self.par.tx.SetLabel(u"Download complete")
+        #self.par.tx.GetParent().Fit()
+        self.par.pb.SetValue(0)
+        self.par.Refresh()
         print("Download complete")
         return
