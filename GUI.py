@@ -53,7 +53,7 @@ class MainFrame ( wx.Frame ):
 
 		gSizer3.Add( self.tFormat, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 10 )
 
-		FormatChoices = [ u"any", u"video/mp4", u"video/webm" ]
+		FormatChoices = [ u"any", u"video/mp4", u"video/webm", u"audio/mp4", u"audio/webm"]
 		self.cFormat = wx.ComboBox( self, wx.ID_ANY, u"any", wx.DefaultPosition, wx.DefaultSize, FormatChoices, 0 )
 		gSizer3.Add( self.cFormat, 0, wx.ALL|wx.EXPAND, 5 )
 		
@@ -77,7 +77,7 @@ class MainFrame ( wx.Frame ):
 
 		gSizer3.Add( self.tRes, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 10 )
 
-		resChoices = [ u"any", u"144p", u"360p", u"480p", u"720p", u"1080p" ]
+		resChoices = [ u"any", u"144p", u"360p", u"480p", u"720p", u"1080p"]
 		self.cRes = wx.ComboBox( self, wx.ID_ANY, u"any", wx.DefaultPosition, wx.DefaultSize, resChoices, 0 )
 		gSizer3.Add( self.cRes, 0, wx.ALL|wx.EXPAND, 5 )
 
@@ -88,7 +88,7 @@ class MainFrame ( wx.Frame ):
 
 		gSizer3.Add( self.tCodec, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 10 )
 
-		codecChoices = []
+		codecChoices = [u"any", u"vp9"]
 		self.cCodec = wx.ComboBox( self, wx.ID_ANY, u"any", wx.DefaultPosition, wx.DefaultSize, codecChoices, 0 )
 		gSizer3.Add( self.cCodec, 0, wx.ALL|wx.EXPAND, 5 )
 
@@ -132,6 +132,7 @@ class MainFrame ( wx.Frame ):
 		self.ListCtrl.InsertColumn(2, "format")
 		self.ListCtrl.InsertColumn(3, "FPS")
 		self.ListCtrl.InsertColumn(4, "VideoCodec")
+		self.ListCtrl.InsertColumn(5, "AudioCodec")
 
 		bSizer6.Add( self.ListCtrl, 1, wx.EXPAND |wx.ALL, 5 )
 
@@ -146,7 +147,7 @@ class MainFrame ( wx.Frame ):
 			
 		bSizer5 = wx.BoxSizer( wx.VERTICAL )
 		
-		self.tDl = wx.StaticText( self, wx.ID_ANY, u"", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_CENTER_HORIZONTAL|wx.ST_ELLIPSIZE_MIDDLE )
+		self.tDl = wx.StaticText( self, wx.ID_ANY, "", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_CENTER_HORIZONTAL|wx.ST_ELLIPSIZE_MIDDLE )
 		
 		self.tDl.Wrap( -1 )
 		
@@ -193,19 +194,12 @@ class MainFrame ( wx.Frame ):
 		#vcodec
 		for i in range(len(lst)):
 			#print(lst[i])
-			self.ListCtrl.InsertStringItem(i, str(lst[i].itag))
+			self.ListCtrl.InsertItem(i, str(lst[i].itag))
 			self.ListCtrl.SetItem(i, 1, str(lst[i].resolution))
 			self.ListCtrl.SetItem(i, 2, str(lst[i].mime_type))
 			self.ListCtrl.SetItem(i, 3, str(lst[i].fps))
-			item = ""
-			try:
-				item = lst[i].video_codec
-			except:
-				try:
-					item = lst[i].audio_codec
-				except:
-					item = "Undefined"
-			self.ListCtrl.SetStringItem(i, 4, str(item))			
+			self.ListCtrl.SetItem(i, 4, str(lst[i].video_codec))
+			self.ListCtrl.SetItem(i, 5, str(lst[i].audio_codec))
 		
 	def DownloadItem(self, event):
 		#print(self.ListCtrl.GetSelectedItemCount())
@@ -217,7 +211,7 @@ class MainFrame ( wx.Frame ):
 		#proc = Process(target=self.yt.download, args=[self.ListCtrl.GetNextSelected(-1), self.pb])
 		#self.loop.create_task(self.yt.download(self.ListCtrl.GetNextSelected(-1)))
 		threading.Thread(target=self.yt.download, args=[self.ListCtrl.GetNextSelected(-1)]).start()
-		print("download thread started")
+		print("Download started")
 		#proc.start()
 		#self.pb.Hide()
 		
@@ -233,6 +227,13 @@ class MainFrame ( wx.Frame ):
 		sup = {"res":self.cRes.GetValue(), "fps":self.cFps.GetValue(), "mime_type":self.cFormat.GetValue(), "vcodec":self.cCodec.GetValue()}
 		self.yt.set_filters(sup)
 		return
+
+
+	def PrtPb(self):
+		self.Refresh()
+		self.Update()
+		print(self.pb.GetValue())
+	
 
 	def __del__(self):
 		pass
