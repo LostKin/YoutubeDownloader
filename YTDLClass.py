@@ -34,7 +34,7 @@ class YTDL:
                 self.st = self.st.filter(video_codec=fil[i])
     
     def get_streams_list(self):
-        return self.st.all()
+        return self.st
     
     def reset_filters(self):
         self.st = self.yt.streams
@@ -42,14 +42,14 @@ class YTDL:
     
     def download(self, id):
         self.per = 0
-        if (len(self.st.all()) <= id):
+        if (len(self.st) <= id):
             return 1
         #self.par.tx.SetLabel("0%")
         #self.par.Fit()
         #self.par.Refresh()
         #self.par.Update()        
         #self.par.tx.GetParent().Layout()
-        t = self.st.all()[id]
+        t = self.st[id]
         self.done = 0
         self.all = -1
         self.last = "0%"
@@ -66,7 +66,7 @@ class YTDL:
         self.last = s
         sys.stdout.flush()
     
-    def on_download_progress(self, stream, chunk, file_handler, bytes_remaining):
+    def on_download_progress(self, stream, chunk, bytes_remaining):
         if self.all == -1:
             self.all = bytes_remaining
         #print(100 * self.done / self.all, self.per)
