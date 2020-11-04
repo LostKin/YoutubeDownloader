@@ -31,7 +31,7 @@ class MainFrame ( wx.Frame ):
 		self.tUrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.tUrl.SetForegroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOWTEXT ) )
 
-		bSizer2.Add( self.tUrl, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL|wx.EXPAND, 5 )
+		bSizer2.Add( self.tUrl, 0, wx.ALL|wx.EXPAND, 5 )
 
 
 		bSizer1.Add( bSizer2, 0, wx.EXPAND, 2 )
@@ -39,7 +39,7 @@ class MainFrame ( wx.Frame ):
 		bSizer3 = wx.BoxSizer( wx.VERTICAL )
 
 		self.bSet = wx.Button( self, wx.ID_ANY, u"Set this URL as current", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer3.Add( self.bSet, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL|wx.EXPAND, 5 )
+		bSizer3.Add( self.bSet, 0, wx.ALL|wx.EXPAND, 5 )
 		
 		self.bSet.Bind(wx.EVT_BUTTON, self.SetURL)
 
